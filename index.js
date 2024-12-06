@@ -52,6 +52,24 @@ async function run() {
         const result = await visaCollection.findOne(query)
         res.send(result);
     })
+    app.get('/visa/:countryName',async(req,res)=>{
+        // const createdBy =req.params.createdBy;
+        const countryName =req.params.countryName;
+        const cursor = { countryName:countryName}
+        const result = await visaCollection.findOne(cursor)
+        res.send(result)
+        })
+        app.get('/visa/email/:createdBy', async (req, res) => {
+            
+                const createdBy = req.params.createdBy; // Dynamically get `countryName`
+                const query = { createdBy: createdBy }; // Match countryName field in MongoDB
+                const result = await visaCollection.find(query).toArray(); // No ObjectId conversion here
+        
+                
+                    res.send(result);
+             
+        });
+        
 
     app.post('/visa', async(req,res)=>{
         const newVisa = req.body;
@@ -68,50 +86,7 @@ async function run() {
         res.send(result)
       })
 
-      app.get('/user-visa-details', async (req, res) => {
-        try {
-          const pipeline = [
-            {
-              $lookup: {
-                from: 'visa',
-                localField: 'fee',  // Assuming the 'fee' is a way to match users with visa records
-                foreignField: 'fee', // Adjust according to your actual matching field
-                as: 'visaDetails',
-              }
-            },
-            {
-              $unwind: '$visaDetails'
-            },
-            {
-              $project: {
-                _id: 1,
-                email: 1,
-                firstName: 1,
-                lastName: 1,
-                appliedDate: 1,
-                fee: 1,
-                visaDetails: {
-                  countryName: 1,
-                  visaType: 1,
-                  processingTime: 1,
-                  requiredDocuments: 1,
-                  description: 1,
-                  ageRestriction: 1,
-                  validity: 1,
-                  applicationMethod: 1,
-                  image: 1
-                }
-              }
-            }
-          ];
-      
-          const result = await userCollection.aggregate(pipeline).toArray();
-          res.send(result);
-        } catch (error) {
-          console.log(error);
-          res.status(500).send({ error: 'Failed to retrieve data' });
-        }
-      });
+   
       
   
       app.post('/users', async(req,res)=>{
@@ -129,6 +104,8 @@ async function run() {
     app.listen(port,()=>{
         console.log(`server is running on port:${port}`)
     })
+
+    
 
 
 
