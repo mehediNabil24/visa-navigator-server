@@ -65,37 +65,14 @@ async function run() {
       res.send(result);
     });
 
-    app.put("/visa/email/:createdBy", async (req, res) => {
-      const createdBy = req.params.createdBy;
-      const filter = { createdBy: createdBy };
-      const updatedVisa = req.body;
-      const options = { upsert: true };
-      const updateVisa = {
-        $set: {
-          image :updatedVisa.name,
-          countryName: updatedVisa.countryName,
-          visaType: updatedVisa.visaType,
-          processingTime: updatedVisa.processingTime,
-          requiredDocuments: updatedVisa.requiredDocuments,
-          description: updatedVisa.description,
-          ageRestriction: updatedVisa.ageRestriction,
-          fee: updatedVisa.fee,
-          validity: updatedVisa.validity,
-          applicationMethod: updatedVisa.applicationMethod
-        },
-      };
-      const result =await visaCollection.updateOne(filter,updateVisa,options)
-      res.send(result);
-    });
-
-    // app.put("/visa/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const filter = { _id: new ObjectId(id) };
+    // app.put("/visa/email/:createdBy", async (req, res) => {
+    //   const createdBy = req.params.createdBy;
+    //   const filter = { createdBy: createdBy };
     //   const updatedVisa = req.body;
     //   const options = { upsert: true };
     //   const updateVisa = {
     //     $set: {
-    //       image :updatedVisa.name,
+    //       image :updatedVisa.image,
     //       countryName: updatedVisa.countryName,
     //       visaType: updatedVisa.visaType,
     //       processingTime: updatedVisa.processingTime,
@@ -110,6 +87,33 @@ async function run() {
     //   const result =await visaCollection.updateOne(filter,updateVisa,options)
     //   res.send(result);
     // });
+
+    app.put("/visa/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log('ID:', id); // Debug ID
+      const filter = { _id: new ObjectId(id) };
+      const updatedVisa = req.body;
+      console.log('Updated Visa:', updatedVisa); // Debug incoming payload
+      const options = { upsert: true };
+      const updateVisa = {
+        $set: {
+          image: updatedVisa.image,
+          countryName: updatedVisa.countryName,
+          visaType: updatedVisa.visaType,
+          processingTime: updatedVisa.processingTime,
+          requiredDocuments: updatedVisa.requiredDocuments,
+          description: updatedVisa.description,
+          ageRestriction: updatedVisa.ageRestriction,
+          fee: updatedVisa.fee,
+          validity: updatedVisa.validity,
+          applicationMethod: updatedVisa.applicationMethod
+        },
+      };
+      const result = await visaCollection.updateOne(filter, updateVisa, options);
+      console.log('Update Result:', result); // Debug MongoDB result
+      res.send(result);
+    });
+    
 
     app.post("/visa", async (req, res) => {
       const newVisa = req.body;
