@@ -131,6 +131,20 @@ async function run() {
       const cursor = userCollection.find();
       const result = await cursor.toArray();
       res.send(result);
+    })
+      app.get("/users/:email", async (req, res) => {
+        const email = req.params.email;
+        const query = { email: email };
+        const result = await userCollection.find(query).toArray();
+        res.send(result);
+      });
+    
+
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.findOne(query);
+      res.send(result);
     });
 
     app.post("/users", async (req, res) => {
@@ -141,6 +155,14 @@ async function run() {
 
       res.send(result);
     });
+
+    app.delete("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
+      res.send(result);
+    });
+
 
     app.listen(port, () => {
       console.log(`server is running on port:${port}`);
