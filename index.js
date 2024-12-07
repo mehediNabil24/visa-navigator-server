@@ -136,12 +136,22 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     })
-      app.get("/users/:email", async (req, res) => {
-        const email = req.params.email;
-        const query = { email: email };
-        const result = await userCollection.find(query).toArray();
-        res.send(result);
-      });
+     
+    app.get("/users/:email", async (req, res) => {
+      const {searchParam} = req.query;
+      const email = req.params.email;
+      const query = { email: email };
+      
+      if(searchParam){
+        query.countryName = {$regex:searchParam, $options:"i"}
+      }
+
+
+      
+      const result = await userCollection.find(query).toArray();
+      res.send(result);
+    });
+
     
 
     app.get("/users/:id", async (req, res) => {
